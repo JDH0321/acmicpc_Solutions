@@ -1,51 +1,73 @@
 #include <cstdio>
-#include <queue>
 #include <vector>
-#include <cstring>
-#include <algorithm>
-#define INF 11
-#define MAX_V 501
+#include <queue>
+#include <utility>
+#define INF 987654321
+
 using namespace std;
+
+vector<int> dijkstra(int,int,vector<pair<int, int> >*);
 
 int main(void)
 {
-    int V, E, start;
-    int weight[MAX_V][MAX_V];
+    int V, E, K;
+    vector<pair<int, int> > graph[20001];
 
-    int visited[MAX_V] = {0};
-    int dist[MAX_V];
-    queue<int> q;
-    scanf("%d %d", &V, &E);
-    scanf("%d", &start);
-    memset(weight, MAX_V*MAX_V, INF);
-    memset(dist, MAX_V, INF);
-    for(int i = 1 ; i <= E; i++)
+    scanf("%d %d %d", &V, &E, &K);
+
+    for(int i = 0 ; i < E; i++)
     {
         int u, v, w;
         scanf("%d %d %d", &u, &v, &w);
-        weight[u][v] = w;
+        graph[u].push_back(make_pair(v, w));
     }
 
-    dist[start] = 0;
-    q.push(start);
+    vector<int> res = dijkstra(V, K, graph);
 
-    while(!q.empty())
+    int len = res.size();
+    for(int i = 1 ; i < len ; i++)
     {
-        int cur = q.front();
-        q.pop();
+        if(res[i] == INF)
+            printf("INF\n");
+        else
+            printf("%d\n",res[i]);
+    }
+    return 0;
+}
+
+vector<int> dijkstra(int V, int K, vector<pair<int, int> >* graph)
+{
+    vector<int> dist;
+    vector<int> visited;
+    dist.resize(V+1, INF);
+    visited.resize(V+1);
+    priority_queue<pair<int, int> > pq; // w , v 순으로 저장
+
+    dist[K] = 0;
+    pq.push(make_pair(0, K));
+
+    while(!pq.empty())
+    {
+        pair<int, int> p = pq.top();
+        pq.pop();
+        int cur = p.second;
         visited[cur] = 1;
 
-        for(int i = 1; i <= V; i++)
+        //방문하지 않은 노드들의 거리를 갱신
+
+        int len = graph[cur].size();
+
+        for(int i = 0 ; i < len ; i++)
         {
-            if(weight[cur][i] != INF && visited[i] == 0)
+            int next = graph[cur][i].first; // 다음 노드
+            int next_dist = graph[cur][i].second; // 가중치
+            if(!visited[next] && dist[next] > dist[cur] + next_dist)
             {
-                    q.push(i);
-                    dist[i] = min(dist[i], dist[cur] + weight[cur][i]);
+                dist[next] = dist[cur] + next_dist;
+                pq.push(make_pair(-dist[next], next));
             }
         }
     }
 
-    for(int i = 1; i <= V; i++)
-        printf("%d\n", dist[i]);
-    return 0;
+    return dist;
 }
