@@ -1,50 +1,43 @@
 #include <cstdio>
-#include <vector>
-#include <utility>
-
+#include <algorithm>
+#define INF 987654
 using namespace std;
-
-void solve(int[][102], int[][102], int, int, int);
-int start;
 
 int main(void)
 {
-    int N;
-    int map[102][102] = {0};
-    int res[102][102] = {0};
-    scanf("%d", &N);
+    int n, adj[101][101];
+    scanf("%d", &n);
 
-    for(int i = 1 ; i <= N ; i++)
-        for(int j = 1 ; j <= N ; j++)
-            scanf("%d", &map[i][j]);
-
-    for(int i = 1 ; i <= N ; i++)
-        for(int j = 1; j <= N ; j++)
-            if(map[i][j])
-            {
-                start = i;
-                solve(map, res, N, i, j);
-            }
-
-    //
-    // for(int i = 1 ; i <= N ; i++)
-    // {
-    //     for(int j = 1 ; j <= N ; j++)
-    //         printf("%d ", res[i][j]);
-    //     printf("\n");
-    // }
-    return 0;
-}
-
-void solve(int map[][102], int res[][102], int N, int u, int v)
-{
-    printf("%d -> %d \n", u, v);
-    res[u][v] = 1;
-    if(v == start)
-        return;
-    for(int i = 1 ; i <= N ; i++)
+    for(int i = 1; i <= n; i++)
     {
-        if(map[v][i])
-            solve(map, res, N, v, i);
+        for(int j = 1; j <= n; j++)
+        {
+            int con; // 0 or 1
+            scanf("%d", &con);
+
+            if(!con) //0
+                adj[i][j] = INF;
+            else
+                adj[i][j] = 1;
+        }
     }
+
+    for(int k = 1; k <= n; k++)
+        for(int i = 1; i <= n; i++)
+            for(int j = 1; j <= n; j++)
+                adj[i][j] = min(adj[i][j], adj[i][k] + adj[k][j]);
+
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 1; j <= n; j++)
+        {
+            if(adj[i][j] == INF)
+                printf("0 ");
+            else
+                printf("1 ");
+        }
+        puts("");
+    }
+
+    return 0;
 }

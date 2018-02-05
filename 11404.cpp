@@ -17,7 +17,7 @@ int main(void)
     {
         int u, v, w;
         scanf("%d %d %d", &u, &v, &w);
-        adj[u][v] = min(adj[u][v] , w);
+        adj[u][v] = min(adj[u][v], w);
     }
 
     for(int k = 1 ; k <= n ; k++)
